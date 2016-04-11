@@ -1,3 +1,4 @@
 # config.ru
 require './test/sinatra'
-run HelloWorldApp
+require './app/rest'
+run RestApi
