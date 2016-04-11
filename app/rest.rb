@@ -23,11 +23,18 @@ class RestApi < Sinatra::Base
 #    content_type :json
 #    range = JSON.parse(request.body.read)['range']
     range = JSON.parse(params[:json])['range']
-    documents = db['measures'].find({
-      'datapoint' => Integer(params[:datapoint]), 
-      'timestamp' => {"$gte" => range[0], "$lt" => range[1]}
-    })
-    "#{JSON.pretty_generate(documents.to_a)}"
+    documents = db['measures'].aggregate([
+      {"$match" => { 'datapoint' => 2, 'timestamp' => {"$gte" => range[0], "$lt" => range[1]}}},      
+      {"$group" => { 
+        _id: "$datapoint", 
+        min: {"$min" => "$measure"},
+        max: {"$max" => "$measure"}, 
+        avg: {"$avg" => "$measure"} 
+      }}
+    ])
+    h = documents.to_a.first
+    h.delete('_id')
+    "#{JSON.pretty_generate(h)}"
 #    "hello #{range[0]} to #{range[1]}"     
   end
 end
