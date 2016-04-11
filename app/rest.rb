@@ -21,10 +21,9 @@ class RestApi < Sinatra::Base
   
   get '/:datapoint' do
     content_type :json
-#    range = JSON.parse(request.body.read)['range']
     range = JSON.parse(params[:json])['range']
     documents = db['measures'].aggregate([
-      {"$match" => { 'datapoint' => 2, 'timestamp' => {"$gte" => range[0], "$lt" => range[1]}}},      
+      {"$match" => { 'datapoint' => Integer(params[:datapoint]), 'timestamp' => {"$gte" => range[0], "$lt" => range[1]}}},      
       {"$group" => { 
         _id: "$datapoint", 
         min: {"$min" => "$measure"},
