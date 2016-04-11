@@ -21,8 +21,13 @@ class RestApi < Sinatra::Base
   
   get '/:datapoint' do
 #    content_type :json
-    documents = db['measures'].find('datapoint' => Integer(params[:datapoint]))
-    range = params[:range]  
-    "#{JSON.pretty_generate(documents.to_a)}"   
+#    range = JSON.parse(request.body.read)['range']
+    range = JSON.parse(params[:json])['range']
+    documents = db['measures'].find({
+      'datapoint' => Integer(params[:datapoint]), 
+      'timestamp' => {"$gte" => range[0], "$lt" => range[1]}
+    })
+    "#{JSON.pretty_generate(documents.to_a)}"
+#    "hello #{range[0]} to #{range[1]}"     
   end
 end
