@@ -4,35 +4,36 @@ require 'mongo'
 require 'sinatra'
 
 class RestApi < Sinatra::Base
-  db = Mongo::Client.new('mongodb://127.0.0.1:27017/measures')
+  db_url  = ENV['MONGO_HOSTADDR'] || '127.0.0.1:27017'
+  db_name = ENV['MONGO_DATABASE'] || 'measurementstat'  
+  db      = Mongo::Client.new([db_url], :database => db_name)
 
   post '/:datapoint' do
     payload = JSON.parse(request.body.read)
     payload.each do |k, v| 
       db['measures'].insert_one({
-        datapoint: Integer(params[:datapoint]), 
-        timestamp: Integer(k), 
+        datapoint: params[:datapoint].to_i, 
+        timestamp: k.to_i, 
         measure: v
       })
     end
     
-    halt
+    halt 201
   end
   
   get '/:datapoint' do
     content_type :json
     range = JSON.parse(params[:json])['range']
     documents = db['measures'].aggregate([
-      {"$match" => { 'datapoint' => Integer(params[:datapoint]), 'timestamp' => {"$gte" => range[0], "$lt" => range[1]}}},      
+      {"$match" => { 'datapoint' => params[:datapoint].to_i, 'timestamp' => {"$gte" => range[0], "$lt" => range[1]}}},      
       {"$group" => { 
         _id: "$datapoint", 
         min: {"$min" => "$measure"},
         max: {"$max" => "$measure"}, 
         avg: {"$avg" => "$measure"} 
-      }}
+      }},
+      {"$project" => {_id: 0, min: 1, max: 1, avg: 1}}
     ])
-    h = documents.to_a.first
-    h.delete('_id')
-    JSON.pretty_generate(h)
+    JSON.pretty_generate documents.to_a.first
   end
 end

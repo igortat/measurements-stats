@@ -16,7 +16,6 @@ def post
      req = Net::HTTP::Post.new(@post_ws, initheader = {'Content-Type' =>'application/json'})
           req.body = @payload
           response = Net::HTTP.new(@host, @port).start {|http| http.request(req) }
-#          puts "Response #{response.code} #{response.message}: #{response.body}"
 end
 
 post
