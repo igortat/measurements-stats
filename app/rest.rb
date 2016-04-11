@@ -20,7 +20,7 @@ class RestApi < Sinatra::Base
   end
   
   get '/:datapoint' do
-#    content_type :json
+    content_type :json
 #    range = JSON.parse(request.body.read)['range']
     range = JSON.parse(params[:json])['range']
     documents = db['measures'].aggregate([
@@ -34,7 +34,6 @@ class RestApi < Sinatra::Base
     ])
     h = documents.to_a.first
     h.delete('_id')
-    "#{JSON.pretty_generate(h)}"
-#    "hello #{range[0]} to #{range[1]}"     
+    JSON.pretty_generate(h)
   end
 end
