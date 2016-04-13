@@ -26,14 +26,6 @@ RSpec.describe "Specing REST" do
     expect(JSON.parse(last_response.body)['min'].to_i).to equal(2)
     expect(JSON.parse(last_response.body)['avg'].to_i).to equal(3)
     expect(JSON.parse(last_response.body)['max'].to_i).to equal(4)  
-  end  
-   
-  it "GET spec2" do     
-    params2 = {'range' => [1460205600,1460205800]}
-    get '/42', :json => params2.to_json
-    expect(JSON.parse(last_response.body)['min'].to_i).to equal(2)
-    expect(JSON.parse(last_response.body)['avg'].to_i).to equal(4)
-    expect(JSON.parse(last_response.body)['max'].to_i).to equal(6)  
   end
   
 end
