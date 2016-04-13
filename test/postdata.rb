@@ -4,7 +4,7 @@ require 'net/http'
 
 @host = 'localhost'
 @port = '9292'
-@post_ws = "/2"
+@post_ws = "/1"
 
 @payload ={
     "1460205648" => 10,

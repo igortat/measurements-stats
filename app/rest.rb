@@ -34,6 +34,7 @@ class RestApi < Sinatra::Base
       }},
       {"$project" => {_id: 0, min: 1, max: 1, avg: 1}}
     ])
-    JSON.pretty_generate documents.to_a.first
+    documents.to_a.first.to_json
   end
+  
 end
