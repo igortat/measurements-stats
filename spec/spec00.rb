@@ -4,18 +4,18 @@ require File.expand_path('../../app/rest.rb', __FILE__)
 
 RSpec.describe "Specing REST" do
   
+  let(:payload) {{
+    "1460205601" => 2,
+    "1460205648" => 4,
+    "1460205701" => 6
+  }} 
+  
   before(:all) do
     Mongo::Client.new([ENV['MONGO_HOSTADDR']], :database => ENV['MONGO_DATABASE']).database.drop
-        
-    @payload = {
-      "1460205601" => 2,
-      "1460205648" => 4,
-      "1460205701" => 6
-    } 
   end
   
   it "POST spec" do   
-    post '/42', @payload.to_json, {'Content-Type' => 'application/json'} 
+    post '/42', payload.to_json, {'Content-Type' => 'application/json'} 
     expect(last_response.status).to equal(201)
   end
   
